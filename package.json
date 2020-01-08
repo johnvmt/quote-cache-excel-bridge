@@ -8,7 +8,10 @@
     "email": "johnvmt@gmail.com"
   },
   "devDependencies": {
-    "electron": "^7.1.7"
+    "electron": "^7.1.7",
+    "electron-builder": "^20.44.4",
+    "electron-rebuild": "^1.8.8",
+    "typescript": "^3.5.2"
   },
   "dependencies": {
     "command-line-args": "^5.1.1",
