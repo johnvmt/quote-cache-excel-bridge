@@ -1,5 +1,5 @@
 {
-  "name": "quote-cache-excel-bridge-kiosk",
+  "name": "quote-cache-excel-bridge",
   "version": "0.0.1",
   "description": "Output Quote Cache variables to Excel files",
   "private": true,

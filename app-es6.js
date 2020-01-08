@@ -62,7 +62,9 @@ export default (appOptions) => {
 	});
 
 	function debug() {
-		if(appOptions.debug)
-			console.log.apply(console, [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)));
+		//if(appOptions.debug)
+			fs.appendFileSync('log.txt', [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)).join(' ') + '\r\n', 'utf8');
+			//log.info(Array.prototype.slice.call(arguments));
+			//console.log.apply(console, [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)));
 	}
 }
