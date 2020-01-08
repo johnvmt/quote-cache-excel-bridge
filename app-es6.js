@@ -1,5 +1,6 @@
 import {app, Tray, Menu, dialog, nativeImage} from "electron";
 import fs from "fs";
+import path from "path";
 import GraphQLExcelSubscriber from "./src/GraphQLExcelSubscriber";
 
 export default (appOptions) => {
@@ -14,17 +15,16 @@ export default (appOptions) => {
 
 	app.once('ready', () => {
 
-		const trayImage = nativeImage.createFromPath('build/icon.png')
+		let imgPath = app.isPackaged ? path.join(process.resourcesPath, "icon.png") : path.join(execPath, "assets", "icon.png");
+		const trayImage = nativeImage.createFromPath(imgPath);
 		const tray = new Tray(trayImage);
 		//tray.setTitle('Cache Excel Bridge');
 
 		const contextMenu = Menu.buildFromTemplate([
 			{id: 'quit', label: 'Quit', click: () => { app.quit() } }
-
 		]);
 
 		tray.setToolTip('Cache Excel Bridge');
-
 		tray.setContextMenu(contextMenu);
 
 		const configFileNames = appOptions.hasOwnProperty('config') ?
