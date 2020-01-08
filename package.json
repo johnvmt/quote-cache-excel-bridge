@@ -35,6 +35,10 @@
     "productName": "Quote Cache Excel Bridge",
     "appId": "com.johnmurphyteixidor.quotecacheexcelbridge",
     "asar": true,
+    "files": [
+      "./build/**/*",
+      "./cli.js"
+    ],
     "win": {
       "publish": null,
       "asar": true,
