@@ -25,7 +25,9 @@
     "url": "https://github.com/johnvmt/quote-cache-excel-bridge"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder build --win"
   },
   "build": {
     "productName": "Quote Cache Excel Bridge",
