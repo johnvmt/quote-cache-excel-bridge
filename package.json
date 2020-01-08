@@ -31,14 +31,11 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder build --win"
   },
+  "main": "cli.js",
   "build": {
     "productName": "Quote Cache Excel Bridge",
     "appId": "com.johnmurphyteixidor.quotecacheexcelbridge",
     "asar": true,
-    "files": [
-      "./build/**/*",
-      "./cli.js"
-    ],
     "win": {
       "publish": null,
       "asar": true,
