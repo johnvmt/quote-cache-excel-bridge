@@ -11,6 +11,8 @@ export default (appOptions) => {
 	else
 		execPath = app.getAppPath();
 
+	dialog.showErrorBox("Exec path", `${execPath}`);
+
 	Object.apply(appOptions, {execPath: execPath});
 
 	app.once('ready', () => {
