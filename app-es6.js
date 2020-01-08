@@ -1,4 +1,4 @@
-import {app, Tray, Menu, dialog} from "electron";
+import {app, Tray, Menu, dialog, nativeImage} from "electron";
 import fs from "fs";
 import GraphQLExcelSubscriber from "./src/GraphQLExcelSubscriber";
 
@@ -14,7 +14,8 @@ export default (appOptions) => {
 
 	app.once('ready', () => {
 
-		const tray = new Tray('build/icon.png');
+		const trayImage = nativeImage.createFromPath('build/icon.png')
+		const tray = new Tray(trayImage);
 		//tray.setTitle('Cache Excel Bridge');
 
 		const contextMenu = Menu.buildFromTemplate([
@@ -25,7 +26,6 @@ export default (appOptions) => {
 		tray.setToolTip('Cache Excel Bridge');
 
 		tray.setContextMenu(contextMenu);
-
 
 		const configFileNames = appOptions.hasOwnProperty('config') ?
 			[appOptions.config] :

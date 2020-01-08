@@ -1,6 +1,7 @@
 import createGraphQLClient from "graphql-http-ws-client";
 import WebSocket from "ws";
 import XLSX from "xlsx";
+import path from "path";
 import CacheItemSubscriptionController from "./CacheItemSubscriptionController"
 
 class GraphQLExcelSubscriber {
