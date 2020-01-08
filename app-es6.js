@@ -1,10 +1,31 @@
-import {app, dialog} from "electron";
+import {app, Tray, Menu, dialog} from "electron";
 import fs from "fs";
 import GraphQLExcelSubscriber from "./src/GraphQLExcelSubscriber";
 
 export default (appOptions) => {
 
+	let execPath = null;
+	if(process.env.hasOwnProperty('PORTABLE_EXECUTABLE_DIR'))
+		execPath = process.env.PORTABLE_EXECUTABLE_DIR;
+	else
+		execPath = app.getAppPath();
+
+	Object.apply(appOptions, {execPath: execPath});
+
 	app.once('ready', () => {
+
+		const tray = new Tray('build/icon.png');
+		//tray.setTitle('Cache Excel Bridge');
+
+		const contextMenu = Menu.buildFromTemplate([
+			{id: 'quit', label: 'Quit', click: () => { app.quit() } }
+
+		]);
+
+		tray.setToolTip('Cache Excel Bridge');
+
+		tray.setContextMenu(contextMenu);
+
 
 		const configFileNames = appOptions.hasOwnProperty('config') ?
 			[appOptions.config] :
@@ -54,17 +75,14 @@ export default (appOptions) => {
 			}
 
 			for(let config of configs) {
-				new GraphQLExcelSubscriber(config, {
-					debug: debug
-				})
+				new GraphQLExcelSubscriber(config, Object.assign({}, appOptions, {debug: debug}));
 			}
 		}
 	});
 
 	function debug() {
-		//if(appOptions.debug)
-			fs.appendFileSync('log.txt', [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)).join(' ') + '\r\n', 'utf8');
-			//log.info(Array.prototype.slice.call(arguments));
-			//console.log.apply(console, [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)));
+		if(appOptions.debug)
+			console.log.apply(console, [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)));
+			//fs.appendFileSync('log.txt', [(new Date()).toISOString()].concat(Array.prototype.slice.call(arguments)).join(' ') + '\r\n', 'utf8');
 	}
 }
