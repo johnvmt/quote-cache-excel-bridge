@@ -2,10 +2,12 @@ import createGraphQLClient from "graphql-http-ws-client";
 import WebSocket from "ws";
 import XLSX from "xlsx";
 import path from "path";
+import EventEmitter from "wolfy87-eventemitter";
 import CacheItemSubscriptionController from "./CacheItemSubscriptionController"
 
-class GraphQLExcelSubscriber {
+class GraphQLExcelSubscriber extends EventEmitter {
 	constructor(config, options) {
+		super();
 		const self = this;
 
 		self._options = options;
@@ -20,14 +22,17 @@ class GraphQLExcelSubscriber {
 
 		subscriptionClient.onConnected(() => {
 			self.debug("Connected to", self._config.serverURL);
+			self.emit('connected');
 		});
 
 		subscriptionClient.onReconnected(() => {
 			self.debug("Reconnected to", self._config.serverURL);
+			self.emit('reconnected');
 		});
 
 		subscriptionClient.onDisconnected(() => {
 			self.debug("Disconnected from", self._config.serverURL);
+			self.emit('disconnected');
 		});
 
 		for(let subscriptionParams of self._config.subscriptions) {
@@ -51,6 +56,7 @@ class GraphQLExcelSubscriber {
 			else if(!self.hasOwnProperty('_outputTimeout')) {
 				self._outputTimeout = setTimeout(() => {
 					self.outputWorkbook();
+					delete self._outputTimeout;
 				}, self._config.outputDebounce)
 			}
 		}
