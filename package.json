@@ -34,7 +34,7 @@
   "main": "cli.js",
   "build": {
     "productName": "Quote Cache Excel Bridge",
-    "appId": "com.johnmurphyteixidor.quotecacheexcelbridge",
+    "appId": "com.turner.datastore.quotecacheexcelbridge",
     "asar": true,
     "extraFiles": [
       {
@@ -48,10 +48,16 @@
     "win": {
       "publish": null,
       "asar": true,
-      "publisherName": "John Murphy",
+      "publisherName": "CNN DataStore",
       "target": [
-        "portable"
+        "portable", "nsis"
       ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": false,
+      "installerIcon": "build/icon.ico"
     }
   }
 }
