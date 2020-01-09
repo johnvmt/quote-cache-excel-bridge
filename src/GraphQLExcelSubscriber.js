@@ -47,39 +47,51 @@ class GraphQLExcelSubscriber extends EventEmitter {
 		}
 	}
 
+	setOutputWorkbookTimeout() {
+		const self = this;
+		const timeout = (typeof self._config.outputDebounce === 'number') ? self._config.outputDebounce : 3000;
+		if(!self.hasOwnProperty('_outputTimeout')) {
+			self._outputTimeout = setTimeout(() => {
+				self.outputWorkbook();
+				delete self._outputTimeout;
+			}, timeout)
+		}
+	}
+
 	outputWorkbookSafe() {
 		const self = this;
 
 		if(self._config.hasOwnProperty('outputDebounce') && typeof self._config.outputDebounce === 'number') {
 			if(!this.hasOwnProperty('_lastOutput') || (new Date() - self._lastOutput) > self._config.outputDebounce)
 				this.outputWorkbook();
-			else if(!self.hasOwnProperty('_outputTimeout')) {
-				self._outputTimeout = setTimeout(() => {
-					self.outputWorkbook();
-					delete self._outputTimeout;
-				}, self._config.outputDebounce)
-			}
+			else
+				this.setOutputWorkbookTimeout();
 		}
 		else
 			self.outputWorkbook();
 	}
 
 	outputWorkbook() {
-		this._lastOutput = new Date();
-		const xlsWorkbook = XLSX.utils.book_new();
-		const xlsWorksheetName = (typeof this._config.outputWorksheet === 'string') ? this._config.outputWorksheet : "Sheet 1";
-		const xlsWorksheetData = [];
+		try {
+			const xlsWorkbook = XLSX.utils.book_new();
+			const xlsWorksheetName = (typeof this._config.outputWorksheet === 'string') ? this._config.outputWorksheet : "Sheet 1";
+			const xlsWorksheetData = [];
 
-		for(let cacheItemSubscriptionController of this._cacheItemSubscriptionControllers) {
-			xlsWorksheetData.push([cacheItemSubscriptionController.subscriptionParams.variable, cacheItemSubscriptionController.data]);
+			for(let cacheItemSubscriptionController of this._cacheItemSubscriptionControllers) {
+				xlsWorksheetData.push([cacheItemSubscriptionController.subscriptionParams.variable, cacheItemSubscriptionController.data]);
+			}
+
+			const xlsWorksheet = XLSX.utils.aoa_to_sheet(xlsWorksheetData);
+			XLSX.utils.book_append_sheet(xlsWorkbook, xlsWorksheet, xlsWorksheetName);
+
+			XLSX.writeFile(xlsWorkbook, this._config.outputWorkbook);
+			this._lastOutput = new Date();
+			this.debug("Outputting workbook", this._config.outputWorkbook);
 		}
-
-		const xlsWorksheet = XLSX.utils.aoa_to_sheet(xlsWorksheetData);
-		XLSX.utils.book_append_sheet(xlsWorkbook, xlsWorksheet, xlsWorksheetName);
-
-		XLSX.writeFile(xlsWorkbook, this._config.outputWorkbook);
-
-		this.debug("Outputting workbook", this._config.outputWorkbook);
+		catch(error) {
+			this.debug(error.toString());
+			this.setOutputWorkbookTimeout(); // try again
+		}
 	}
 
 	debug() {
