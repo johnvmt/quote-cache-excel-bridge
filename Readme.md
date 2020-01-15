@@ -2,10 +2,27 @@
 ## Sample Configuration
 
     {
-      "serverURL": "http://my.graphql.server/graphql",
-      "outputWorkbook": "stocks.xlsx",
-      "outputWorksheet": "Apple",
-      "outputDebounce": 3000,
+      "serverURL": "http://my.graphql.server/graphql"
+      "excelOutput": {
+        "workbook": "stocks.xlsx",
+        "worksheet": "Stocks",
+        "debounce": 3000,
+        "skipHeader": false,
+        "columns": [
+          {
+            "key": "itemID",
+            "name": "Ticker"
+          },
+          {
+            "key": "fieldID",
+            "name": "Field"
+          },
+          {
+            "key": "value",
+            "name": "Value"
+          }
+        ]
+      },
       "subscriptions": [
         {
           "variable": "AAPL_OPEN",
