@@ -15,7 +15,7 @@ export default (appOptions) => {
 		};
 
 		const execPath = process.env.hasOwnProperty('PORTABLE_EXECUTABLE_DIR') ? process.env.PORTABLE_EXECUTABLE_DIR : app.getAppPath();
-		const assetsPath = app.isPackaged ? process.resourcesPath : path.join(execPath, "assets")
+		const assetsPath = app.isPackaged ? process.resourcesPath : path.join(execPath, "assets");
 
 		Object.apply(appOptions, {
 			execPath: execPath,
@@ -87,7 +87,8 @@ export default (appOptions) => {
 			return;
 		}
 
-
+		if(!config.hasOwnProperty('debug') || config.debug)
+			openDebugWindow();
 
 		const cacheQuoteSubscriptions = new CacheQuoteSubscribers(config.serverURL, config.subscriptions, options);
 
@@ -100,9 +101,6 @@ export default (appOptions) => {
 
 		const contextMenu = Menu.buildFromTemplate([
 			{label: 'Open Log', click: openDebugWindow},
-			{label: 'Open Output File', click: () => {
-					shell.openItem(config.outputWorkbook);
-				}},
 			{label: 'Open Config File', click: () => {
 					shell.openItem(configFileName);
 				}},
