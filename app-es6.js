@@ -63,23 +63,6 @@ export default (appOptions) => {
 				app.quit();
 				return;
 			}
-
-			if(config.hasOwnProperty('excelOutput')) {
-				const excelOutputConfig = config.excelOutput;
-
-				if(!excelOutputConfig.hasOwnProperty('workbook')) {
-					dialog.showErrorBox("Missing excel/outputWorkbook property in Configuration File", `"${configFileName}".`);
-					app.quit();
-					return;
-				}
-				else if(!path.isAbsolute(excelOutputConfig.workbook)) // relative to config file
-					excelOutputConfig.workbook = path.join(path.dirname(configFileName), excelOutputConfig.workbook);
-			}
-
-			if(config.hasOwnProperty('vizOutput')) {
-				const vizOutputConfig = config.vizOutput;
-
-			}
 		}
 		catch (error) {
 			dialog.showErrorBox("Configuration File Parse Error", `"${configFileName}" could not be parsed.`);
@@ -92,8 +75,32 @@ export default (appOptions) => {
 
 		const cacheQuoteSubscriptions = new CacheQuoteSubscribers(config.serverURL, config.subscriptions, options);
 
-		if(config.hasOwnProperty('excelOutput'))
-			new SubscriptionsExcelOutput(cacheQuoteSubscriptions, config.excelOutput, options);
+		// EXCEL OUTPUT
+		if(config.hasOwnProperty('excelOutput')) {
+
+			let excelOutputConfigs = Array.isArray(config.excelOutput) ? config.excelOutput : [config.excelOutput];
+
+			for(let excelOutputConfig of excelOutputConfigs) {
+				if(!excelOutputConfig.hasOwnProperty('workbook')) {
+					dialog.showErrorBox("Missing excel/outputWorkbook property in Configuration File", `"${configFileName}".`);
+					app.quit();
+					return;
+				}
+				else if(!path.isAbsolute(excelOutputConfig.workbook)) // relative to config file
+					excelOutputConfig.workbook = path.join(path.dirname(configFileName), excelOutputConfig.workbook);
+
+				new SubscriptionsExcelOutput(cacheQuoteSubscriptions, excelOutputConfig, options);
+			}
+
+		}
+
+
+
+		if(config.hasOwnProperty('vizOutput')) {
+			const vizOutputConfig = config.vizOutput;
+
+		}
+
 
 		// SET UP TRAY
 		const trayImage = nativeImage.createFromPath(path.join(assetsPath, 'icon.png'));
@@ -116,7 +123,7 @@ export default (appOptions) => {
 				}}
 		]);
 
-		tray.setToolTip('Cache Excel Bridge');
+		tray.setToolTip('Quote Cache Bridge');
 		tray.setContextMenu(contextMenu);
 
 		// SET UP TRAY STATUS ICONS
@@ -149,6 +156,8 @@ export default (appOptions) => {
 				debugWindow.on('closed', () => {
 					debugWindow = null
 				});
+
+				debugWindow.removeMenu();
 
 				await debugWindow.loadURL(`file://${__dirname}/src/LoggingWindow.html`);
 

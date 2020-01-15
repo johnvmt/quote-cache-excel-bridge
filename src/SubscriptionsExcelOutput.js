@@ -7,10 +7,6 @@ class SubscriptionsExcelOutput {
 		self._excelConfig = excelConfig;
 		self._options = options;
 
-		for(let columnConfig of this._excelConfig.columns) {
-			this.outputWorkbookSafe();
-		}
-
 		cacheQuoteSubscriptions.on('data', () => {
 			this.outputWorkbookSafe();
 		})
@@ -39,7 +35,6 @@ class SubscriptionsExcelOutput {
 		try {
 			const xlsWorkbook = XLSX.utils.book_new();
 			const xlsWorksheetName = (typeof this._excelConfig.worksheet === 'string') ? this._excelConfig.worksheet : "Sheet 1";
-			//const xlsWorksheetData = [];
 
 			const excelSheetOptions = {};
 
@@ -80,7 +75,6 @@ class SubscriptionsExcelOutput {
 			this.debug("Error outputting workbook", error);
 			this.outputWorkbookSafe();
 		}
-
 	}
 
 	static filterObject(raw, allowed) {
