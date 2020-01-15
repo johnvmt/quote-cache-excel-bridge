@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import CacheQuoteSubscribers from "./src/CacheQuoteSubscriptions";
 import SubscriptionsExcelOutput from "./src/SubscriptionsExcelOutput";
+import SubscriptionsVizOutput from "./src/SubscriptionsVizOutput";
 
 export default (appOptions) => {
 	app.on('window-all-closed', e => e.preventDefault() ); // prevent app from quitting when log window closes
@@ -77,8 +78,7 @@ export default (appOptions) => {
 
 		// EXCEL OUTPUT
 		if(config.hasOwnProperty('excelOutput')) {
-
-			let excelOutputConfigs = Array.isArray(config.excelOutput) ? config.excelOutput : [config.excelOutput];
+			const excelOutputConfigs = Array.isArray(config.excelOutput) ? config.excelOutput : [config.excelOutput];
 
 			for(let excelOutputConfig of excelOutputConfigs) {
 				if(!excelOutputConfig.hasOwnProperty('workbook')) {
@@ -94,13 +94,14 @@ export default (appOptions) => {
 
 		}
 
-
-
+		// VIZ OUTPUT
 		if(config.hasOwnProperty('vizOutput')) {
-			const vizOutputConfig = config.vizOutput;
+			const vizOutputConfigs = Array.isArray(config.vizOutput) ? config.vizOutput : [config.vizOutput];
 
+			for(let vizOutputConfig of vizOutputConfigs) {
+				new SubscriptionsVizOutput(cacheQuoteSubscriptions, vizOutputConfig, options);
+			}
 		}
-
 
 		// SET UP TRAY
 		const trayImage = nativeImage.createFromPath(path.join(assetsPath, 'icon.png'));
