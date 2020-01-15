@@ -24,6 +24,7 @@ class SubscriptionsExcelOutput {
 				this.outputWorkbook();
 			else if(!self.hasOwnProperty('_outputTimeout')) {
 				self._outputTimeout = setTimeout(() => {
+					delete self._outputTimeout;
 					self.outputWorkbook();
 				}, self._excelConfig.debounce)
 			}
